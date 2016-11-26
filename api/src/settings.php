@@ -5,15 +5,14 @@ return [
  
         // Renderer settings
    
- 
         // Monolog settings
        
         // Database connection settings
         "db" => [
             "host" => "localhost",
-            "dbname" => "lgcdp",
+            "dbname" => "lgcdpgov_social_mobilization",
             "user" => "root",
-            "pass" => "dell5420"
+            "pass" => "asis"
         ],
     ],
 ];

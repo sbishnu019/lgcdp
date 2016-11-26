@@ -16,7 +16,7 @@ $app->group('/api/db/schema', function () {
     	$dbhandler = $this->db;
 		$stmt = $dbhandler->prepare('SHOW TABLES');
 		$stmt->execute();
-		$response->withJson($stmt->fetchAll(),  201, json_encode());
+		$response->withJson($stmt->fetchAll(),  201)->withHeader('Content-Type', 'application/json');
 		return $response;
 
 
@@ -165,7 +165,7 @@ $app->post('/register', function($request, $response, $args) {
 		$code = 3;
 		$data = "Email invalide";
 		$message = array('code' => $code , 'status' => $status, 'data'=> $data );
-		$response->withJson($message);
+		$response->withJson($message, 200);
 		return $response;
 	}
 	

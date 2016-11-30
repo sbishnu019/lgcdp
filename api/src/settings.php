@@ -10,9 +10,9 @@ return [
         // Database connection settings
         "db" => [
             "host" => "localhost",
-            "dbname" => "lgcdpgov_social_mobilization",
+            "dbname" => "lgcdp",
             "user" => "root",
-            "pass" => "asis"
+            "pass" => "dell5420"
         ],
     ],
 ];

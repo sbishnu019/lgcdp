@@ -38,9 +38,101 @@ $app->group('/api/db/schema', function () {
     });
 });
 
+
+/**
+	 * Group route for SM list and detail
+	 * url - /api/db/sm/{option}
+	 * method - GET
+	 * params - 
+	 */
+
+$app->group('/api/sm', function () {
+	/**
+	 * Get sm list of certain district
+	 * url - /api/sm/district/{$district}
+	 * method - GET
+	 * params - district name
+	 */
+	$this->get('/district/{district}',function($request,$response,$args){
+		$district = $request->getAttribute("district");
+		$dbhandler=$this->db;
+		$stmt = $dbhandler->prepare("SELECT id FROM tbl_district WHERE name_en=\"$district\"");
+		$stmt->execute();
+		$id=$stmt->fetch(PDO::FETCH_ASSOC);
+		$district_id = $id['id'];
+		$nextStmt=$dbhandler->prepare("SELECT name FROM tbl_sm WHERE district_id=$district_id ORDER BY id ASC");
+		$nextStmt->execute();
+		$response->withJson($nextStmt->fetchAll());
+		return $response;
+	});
+
+	/**
+	 * Get sm list of certain municipality
+	 * url - /api/sm/munic/{$municipality}
+	 * method - GET
+	 * params - municipality name
+	 */
+	$this->get('/munic/{municipality}',function($request,$response,$args){
+		$municipality = $request->getAttribute("municipality");
+		$dbhandler=$this->db;
+		$stmt = $dbhandler->prepare("SELECT id FROM tbl_district WHERE name_en=\"$municipality\" and type =\"M\"");
+		$stmt->execute();
+		$id=$stmt->fetch(PDO::FETCH_ASSOC);
+		$district_id = $id['id'];
+		$nextStmt=$dbhandler->prepare("SELECT name FROM tbl_sm WHERE district_id=$district_id ORDER BY id ASC");
+		$nextStmt->execute();
+		$response->withJson($nextStmt->fetchAll());
+		return $response;
+	});
+
+	/**
+	 * Get other regional sm list 
+	 * url - /api/sm/regionalOther
+	 * method - GET
+	 * params - none
+	 */
+	$this->get('/regionalOther',function($request,$response,$args){
+		$dbhandler=$this->db;
+		$nextStmt=$dbhandler->prepare("SELECT name FROM tbl_sm_other ORDER BY id ASC");
+		$nextStmt->execute();
+		$response->withJson($nextStmt->fetchAll());
+		return $response;
+	});
+});
+
+
+
+/**
+	 * Group route for detail of anything
+	 * url - /api/detail/
+	 * method - GET
+	 * params - 
+	 */
+
+$app->group('/api/detail/', function () {
+	/**
+	 * Get sm list of certain district
+	 * url - /api/detail/sm/{$smName}
+	 * method - GET
+	 * params - sm name
+	 */
+	$this->get('sm/{smName}',function($request,$response,$args){
+		$smName = $request->getAttribute("smName");
+		$dbhandler=$this->db;
+		$nextStmt=$dbhandler->prepare("SELECT * FROM tbl_sm WHERE name =\"$smName\"");
+		$nextStmt->execute();
+		$response->withJson($nextStmt->fetch(PDO::FETCH_ASSOC));
+		return $response;
+	});
+});
+
+
+
 $app->get('/munic',function($request, $response, $args){
 	$dbhandler = $this->db;
-	$stmt = $dbhandler->prepare("SELECT id,name_en,ward_qty FROM munici2 ORDER BY name_en ASC");
+	$stmt = $dbhandler->prepare("SELECT name FROM tbl_sm WHERE district_id=39 ORDER BY name ASC");
+	//$stmt = $dbhandler->prepare("SELECT name FROM tbl_sm ORDER BY name ASC");
+	//$stmt = $dbhandler->prepare("SELECT id,name_en,ward_qty FROM munici2 ORDER BY name_en ASC");
 	$stmt->execute();
 	$response->withJson($stmt->fetchAll());
 	return $response;
@@ -48,7 +140,8 @@ $app->get('/munic',function($request, $response, $args){
 
 $app->get('/district',function($request, $response, $args){
 	$dbhandler = $this->db;
-	$stmt = $dbhandler->prepare("SELECT id,name_en,region_id,type FROM tbl_district ORDER BY name_en ASC");
+	//$stmt = $dbhandler->prepare("SELECT id,name_en,region_id,type FROM tbl_district ORDER BY name_en ASC");
+	$stmt = $dbhandler->prepare("SELECT name_en FROM tbl_district ORDER BY name_en ASC");
 	$stmt->execute();
 	$response->withJson($stmt->fetchAll());
 	return $response;

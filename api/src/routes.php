@@ -18,16 +18,6 @@ $app->group('/api/db/schema', function () {
 		$stmt->execute();
 		$response->withJson($stmt->fetchAll(),  201)->withHeader('Content-Type', 'application/json');
 		return $response;
-
-
-		/**
-		$code = 1;
-		$status = true;
-		$data = $stmt->fetchAll();
-		$message = array('code' => $code , 'status' => $status, 'data'=> $data);     	
-		$response->withJson($message,  200)->withHeader('Content-Type', 'application/json');
-		return $response;
-		*/
         
     });
 
@@ -42,10 +32,26 @@ $app->group('/api/db/schema', function () {
     	$dbhandler = $this->db;
 		$stmt = $dbhandler->prepare("DESCRIBE $tblName");
 		$stmt->execute();
-		$response->withJson($stmt->fetchAll(),  201)->withHeader('Content-Type', 'application/json');
+		$response->withJson($stmt->fetchAll(), 201)->withHeader('Content-Type', 'application/json');
 		return $response;
         
     });
+});
+
+$app->get('/munic',function($request, $response, $args){
+	$dbhandler = $this->db;
+	$stmt = $dbhandler->prepare("SELECT id,name_en,ward_qty FROM munici2 ORDER BY name_en ASC");
+	$stmt->execute();
+	$response->withJson($stmt->fetchAll());
+	return $response;
+});
+
+$app->get('/district',function($request, $response, $args){
+	$dbhandler = $this->db;
+	$stmt = $dbhandler->prepare("SELECT id,name_en,region_id,type FROM tbl_district ORDER BY name_en ASC");
+	$stmt->execute();
+	$response->withJson($stmt->fetchAll());
+	return $response;
 });
 
 
@@ -116,8 +122,9 @@ $app->post('/login', function($request, $response, $args) {
  * User Registration
  * url - /register
  * method - POST
- * params - name, email, password, address, contact, assign_type, type, status = 1
+ * params - name, email, password, address, contact
  */
+
 $app->post('/register', function($request, $response, $args) {
 
 	$status = false;
@@ -128,8 +135,6 @@ $app->post('/register', function($request, $response, $args) {
 	$name = $request->getParam('name');
 	$address = $request->getParam('address');
 	$contact = $request->getParam('contact');
-	$assign_type = $request->getParam('assign_type');
-	$type = $request->getParam('type');
 
 	
 
@@ -142,7 +147,7 @@ $app->post('/register', function($request, $response, $args) {
 				return $response;
 			
 		}else{
-			if( create_user($dbhandler, $name, $email, $password, $address, $contact, $assign_type, $type)){
+			if( create_user($dbhandler, $name, $email, $password, $address, $contact)){
 				$status = true;
 				$code = 1;
 				$data = "User successfully Created";
@@ -223,10 +228,7 @@ function get_user_detail($dbhandler,$email){
 							name,
 							address,
 							contact,
-							auth,
-							assign_type,
-							type,
-							status
+							auth
 							FROM tbl_user WHERE username = :email");
 
          	$information->bindParam(":email",$email);
@@ -241,17 +243,15 @@ function get_user_detail($dbhandler,$email){
 * Function to create a new user in Database
 */
 
-function create_user($dbhandler,$name,$email,$password, $address, $contact, $assign_type, $type){
+function create_user($dbhandler,$name,$email,$password, $address, $contact){
 
-	$stmt = $dbhandler->prepare("INSERT INTO tbl_user(name, username, password, address, contact, auth, assign_type, type, status) values(:name, :username, :password, :address, :contact, :auth, :assign_type, :type, 1)");
+	$stmt = $dbhandler->prepare("INSERT INTO tbl_user(name, username, password, address, contact, auth) values(:name, :username, :password, :address, :contact, :auth)");
 	$stmt->bindParam(":name",$name);
 	$stmt->bindParam(":username",$email);
 	$stmt->bindParam(":password",$password);
 	$stmt->bindParam(":address",$address);
 	$stmt->bindParam(":contact",$contact);
 	$stmt->bindParam(":auth", generate_api_key());
-	$stmt->bindParam(":assign_type",$assign_type);
-	$stmt->bindParam(":type",$type);
 	return $stmt->execute();
 }
 

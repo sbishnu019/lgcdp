@@ -203,17 +203,6 @@ $app->group('/api/detail/', function () {
 	});
 });
 
-
-
-$app->get('/munic',function($request, $response, $args){
-	$dbhandler = $this->db;
-	//$stmt = $dbhandler->prepare("SELECT name FROM tbl_sm WHERE district_id=39 ORDER BY name ASC");
-	//$stmt = $dbhandler->prepare("SELECT name FROM tbl_sm ORDER BY name ASC");
-	$stmt = $dbhandler->prepare("SELECT name_en FROM munici2 ORDER BY name_en ASC");
-	$stmt->execute();
-	$response->withJson($stmt->fetchAll());
-	return $response;
-});
 /**
 	 * Group route for list municipality/district
 	 * url - /api/list/
@@ -245,8 +234,8 @@ $app->group('/api/list/', function () {
 
 	$this->get('district',function($request, $response, $args){
 		$dbhandler = $this->db;
-		//$stmt = $dbhandler->prepare("SELECT name_en FROM tbl_district WHERE type=\"D\" ORDER BY name_en ASC");
-		//$stmt->execute();
+		$stmt = $dbhandler->prepare("SELECT name_en FROM tbl_district WHERE type=\"D\" ORDER BY name_en ASC");
+		$stmt->execute();
 		$response->withJson($stmt->fetchAll());
 		return $response;
 	});

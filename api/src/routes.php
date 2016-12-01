@@ -236,8 +236,8 @@ $app->group('/api/list/', function () {
 
 	$this->get('district',function($request, $response, $args){
 		$dbhandler = $this->db;
-		$stmt = $dbhandler->prepare("SELECT name_en FROM tbl_district WHERE type=\"D\" ORDER BY name_en ASC");
-		$stmt->execute();
+		//$stmt = $dbhandler->prepare("SELECT name_en FROM tbl_district WHERE type=\"D\" ORDER BY name_en ASC");
+		//$stmt->execute();
 		$response->withJson($stmt->fetchAll());
 		return $response;
 	});

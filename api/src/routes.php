@@ -205,7 +205,6 @@ $app->group('/api/detail/', function () {
 
 
 
-<<<<<<< HEAD
 $app->get('/munic',function($request, $response, $args){
 	$dbhandler = $this->db;
 	//$stmt = $dbhandler->prepare("SELECT name FROM tbl_sm WHERE district_id=39 ORDER BY name ASC");
@@ -215,14 +214,12 @@ $app->get('/munic',function($request, $response, $args){
 	$response->withJson($stmt->fetchAll());
 	return $response;
 });
-=======
 /**
 	 * Group route for list municipality/district
 	 * url - /api/list/
 	 * method - GET
 	 * params - 
 	 */
->>>>>>> 6ae527bd0ff4334662d8bf811aee4e0281a2335a
 
 $app->group('/api/list/', function () {
 	/**

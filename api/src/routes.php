@@ -60,7 +60,7 @@ $app->group('/api/sm', function () {
 		$stmt->execute();
 		$id=$stmt->fetch(PDO::FETCH_ASSOC);
 		$district_id = $id['id'];
-		$nextStmt=$dbhandler->prepare("SELECT name FROM tbl_sm WHERE district_id=$district_id ORDER BY id ASC");
+		$nextStmt=$dbhandler->prepare("SELECT id, name, address, vdc, phone FROM tbl_sm WHERE district_id=$district_id ORDER BY id ASC");
 		$nextStmt->execute();
 		$response->withJson($nextStmt->fetchAll());
 		return $response;
@@ -79,7 +79,7 @@ $app->group('/api/sm', function () {
 		$stmt->execute();
 		$id=$stmt->fetch(PDO::FETCH_ASSOC);
 		$district_id = $id['id'];
-		$nextStmt=$dbhandler->prepare("SELECT name FROM tbl_sm WHERE district_id=$district_id ORDER BY id ASC");
+		$nextStmt=$dbhandler->prepare("SELECT id, name, address, vdc, phone FROM tbl_sm WHERE district_id=$district_id ORDER BY id ASC");
 		$nextStmt->execute();
 		$response->withJson($nextStmt->fetchAll());
 		return $response;
@@ -93,7 +93,7 @@ $app->group('/api/sm', function () {
 	 */
 	$this->get('/regionalother',function($request,$response,$args){
 		$dbhandler=$this->db;
-		$nextStmt=$dbhandler->prepare("SELECT name FROM tbl_sm_other ORDER BY id ASC");
+		$nextStmt=$dbhandler->prepare("SELECT id, name, address, vdc, phone FROM tbl_sm_other ORDER BY id ASC");
 		$nextStmt->execute();
 		$response->withJson($nextStmt->fetchAll());
 		return $response;
@@ -121,7 +121,7 @@ $app->group('/api/lsp', function () {
 		$stmt->execute();
 		$id=$stmt->fetch(PDO::FETCH_ASSOC);
 		$district_id = $id['id'];
-		$nextStmt=$dbhandler->prepare("SELECT name FROM tbl_lsp WHERE district_id=$district_id ORDER BY id ASC");
+		$nextStmt=$dbhandler->prepare("SELECT id,name,address,office_phone,contact_email FROM tbl_lsp WHERE district_id=$district_id ORDER BY id ASC");
 		$nextStmt->execute();
 		$response->withJson($nextStmt->fetchAll());
 		return $response;
@@ -163,10 +163,10 @@ $app->group('/api/detail/', function () {
 	 * method - GET
 	 * params - sm name
 	 */
-	$this->get('sm/{smName}',function($request,$response,$args){
-		$smName = $request->getAttribute("smName");
+	$this->get('sm/{smId}',function($request,$response,$args){
+		$smId = $request->getAttribute("smId");
 		$dbhandler=$this->db;
-		$nextStmt=$dbhandler->prepare("SELECT * FROM tbl_sm WHERE name =\"$smName\"");
+		$nextStmt=$dbhandler->prepare("SELECT * FROM tbl_sm WHERE id =\"$smId\"");
 		$nextStmt->execute();
 		$response->withJson($nextStmt->fetch(PDO::FETCH_ASSOC));
 		return $response;
@@ -178,10 +178,10 @@ $app->group('/api/detail/', function () {
 	 * method - GET
 	 * params - sm name
 	 */
-	$this->get('othersm/{smName}',function($request,$response,$args){
-		$smName = $request->getAttribute("smName");
+	$this->get('othersm/{smId}',function($request,$response,$args){
+		$smName = $request->getAttribute("smId");
 		$dbhandler=$this->db;
-		$nextStmt=$dbhandler->prepare("SELECT * FROM tbl_sm_other WHERE name =\"$smName\"");
+		$nextStmt=$dbhandler->prepare("SELECT * FROM tbl_sm_other WHERE name =\"$smId\"");
 		$nextStmt->execute();
 		$response->withJson($nextStmt->fetch(PDO::FETCH_ASSOC));
 		return $response;
@@ -193,10 +193,10 @@ $app->group('/api/detail/', function () {
 	 * method - GET
 	 * params - lsp name
 	 */
-	$this->get('lsp/{lspName}',function($request,$response,$args){
-		$lspName = $request->getAttribute("lspName");
+	$this->get('lsp/{lspId}',function($request,$response,$args){
+		$lspId = $request->getAttribute("lspId");
 		$dbhandler=$this->db;
-		$nextStmt=$dbhandler->prepare("SELECT * FROM tbl_lsp WHERE name =\"$lspName\"");
+		$nextStmt=$dbhandler->prepare("SELECT * FROM tbl_lsp WHERE id =\"$lspId\"");
 		$nextStmt->execute();
 		$response->withJson($nextStmt->fetch(PDO::FETCH_ASSOC));
 		return $response;
@@ -275,14 +275,14 @@ $app->post('/login', function($request, $response, $args) {
 	         	//return;
 
 	         	$message = array('code' => $code , 'status' => $status, 'data'=> $data, 'information' => $information );
-	         	$response->withJson($message);
+	         	$response->withJson($message,200);
 	            return $resposne;
 	        } else {
 	            // user password is incorrect
 	            $code = 0;
 	            $data = "Username and Password does not match";
 	            $message = array('code' => $code , 'status' => $status, 'data'=> $data );
-	         	$response->withJson($message);
+	         	$response->withJson($message,200);
 	            return $response;
 	        }
 	    }else {
@@ -290,7 +290,7 @@ $app->post('/login', function($request, $response, $args) {
 	        $code = 2;
 	        $data = "User does not exist";
 	        $message = array('code' => $code , 'status' => $status, 'data'=> $data );
-	        $response->withJson($message);
+	        $response->withJson($message,200);
 	        return $response;
 	    }
 	}
@@ -299,7 +299,7 @@ $app->post('/login', function($request, $response, $args) {
 	        $code = 3;
 	        $data = "Not a valid Email address";
 	        $message = array('code' => $code , 'status' => $status, 'data'=> $data );
-	        $response->withJson($message);
+	        $response->withJson($message,200);
 	        return $response;
 	}
     
